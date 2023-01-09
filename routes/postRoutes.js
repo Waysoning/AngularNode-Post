@@ -12,6 +12,18 @@ router.get('/', async (req, res) => {
   });
 });
 
+router.get('/:id', async (req, res) => {
+  const post = await Post.findByPk(req.params.id);
+  if (!post) {
+    res.status(StatusCodes.NOT_FOUND).json({
+      message: 'Post not found',
+    });
+  }
+  res.status(StatusCodes.OK).json({
+    post,
+  });
+});
+
 router.post('/', async (req, res) => {
   const post = new Post({
     title: req.body.title,
@@ -20,6 +32,17 @@ router.post('/', async (req, res) => {
   await post.save();
   res.status(StatusCodes.CREATED).json({
     message: 'Post created successfully',
+  });
+});
+
+router.put('/:id', async (req, res) => {
+  const post = await Post.findByPk(req.params.id);
+  post.title = req.body.title;
+  post.content = req.body.content;
+
+  await post.save();
+  res.status(StatusCodes.OK).json({
+    message: 'Post updated successfully',
   });
 });
 
