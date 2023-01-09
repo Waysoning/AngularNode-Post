@@ -1,45 +1,41 @@
 <mat-card>
   <mat-spinner *ngIf="isLoading"></mat-spinner>
-  <form (submit)="onSavePost(postForm)" #postForm="ngForm" *ngIf="!isLoading">
+  <form [formGroup]="form" (submit)="onSavePost()" *ngIf="!isLoading">
     <mat-form-field>
       <input
         matInput
         type="text"
-        name="title"
-        [ngModel]="post?.title"
-        required
-        minlength="3"
+        formControlName="title"
         placeholder="Post Title"
       />
       <mat-error
-        *ngIf="
-          postForm.controls.title?.invalid && postForm.controls.title.touched
-        "
+        *ngIf="form.controls.title?.invalid && form.controls.title.touched"
       >
-        <span *ngIf="postForm.controls.title.errors.required"
+        <span *ngIf="form.controls.title.errors.required"
           >Title is required</span
         >
-        <span *ngIf="postForm.controls.title.errors.minlength"
+        <span *ngIf="form.controls.title.errors.minlength"
           >Title must be at least 3 characters</span
         >
       </mat-error>
     </mat-form-field>
+    <div>
+      <button mat-stroked-button type="button" (click)="filePicker.click()">
+        Pick Image
+      </button>
+      <input type="file" #filePicker />
+    </div>
     <mat-form-field>
       <textarea
         matInput
-        rows="6"
-        name="content"
-        [ngModel]="post?.content"
-        required
+        rows="4"
+        formControlName="content"
         placeholder="Post Content"
       ></textarea>
       <mat-error
-        *ngIf="
-          postForm.controls.content?.invalid &&
-          postForm.controls.content.touched
-        "
+        *ngIf="form.controls.content?.invalid && form.controls.content.touched"
       >
-        <span *ngIf="postForm.controls.content.errors.required"
+        <span *ngIf="form.controls.content.errors.required"
           >Content is required</span
         >
       </mat-error>

@@ -19,9 +19,7 @@ router.get('/:id', async (req, res) => {
       message: 'Post not found',
     });
   }
-  res.status(StatusCodes.OK).json({
-    post,
-  });
+  res.status(StatusCodes.OK).json(post);
 });
 
 router.post('/', async (req, res) => {
