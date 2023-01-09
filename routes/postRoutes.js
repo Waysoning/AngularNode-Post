@@ -1,5 +1,6 @@
 import express from 'express';
 import { StatusCodes } from 'http-status-codes';
+import Post from '../models/post.js';
 
 const router = express.Router();
 
@@ -27,9 +28,12 @@ router.get('/', (req, res) => {
   });
 });
 
-router.post('/', (req, res) => {
-  const post = req.body;
-  console.log(post);
+router.post('/', async (req, res) => {
+  const post = new Post({
+    title: req.body.title,
+    content: req.body.content,
+  });
+  await post.save();
   res.status(StatusCodes.CREATED).json({
     message: 'Post created successfully',
   });
