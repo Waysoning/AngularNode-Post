@@ -1,7 +1,15 @@
 <mat-card>
   <form (submit)="onAddPost(postForm)" #postForm="ngForm">
     <mat-form-field>
-      <input matInput type="text" name="title" ngModel required minlength="3" />
+      <input
+        matInput
+        type="text"
+        name="title"
+        ngModel
+        required
+        minlength="3"
+        placeholder="Post Title"
+      />
       <mat-error
         *ngIf="
           postForm.controls.title?.invalid && postForm.controls.title.touched
@@ -16,10 +24,18 @@
       </mat-error>
     </mat-form-field>
     <mat-form-field>
-      <textarea matInput rows="6" name="content" ngModel required></textarea>
+      <textarea
+        matInput
+        rows="6"
+        name="content"
+        ngModel
+        required
+        placeholder="Post Content"
+      ></textarea>
       <mat-error
         *ngIf="
-          postForm.controls.content?.invalid && postForm.controls.content.touched
+          postForm.controls.content?.invalid &&
+          postForm.controls.content.touched
         "
       >
         <span *ngIf="postForm.controls.content.errors.required"
