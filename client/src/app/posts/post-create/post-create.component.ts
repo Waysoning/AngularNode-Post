@@ -12,6 +12,7 @@ import { PostService } from '../post.service';
 })
 export class PostCreateComponent implements OnInit {
   post: Post;
+  isLoading = false;
   private mode = 'create';
   private postId: number;
 
@@ -25,7 +26,9 @@ export class PostCreateComponent implements OnInit {
       if (paramMap.has('postId')) {
         this.mode = 'edit';
         this.postId = +paramMap.get('postId');
+        this.isLoading = true;
         this.postService.getPost(this.postId).subscribe((post) => {
+          this.isLoading = false;
           this.post = post;
         });
       } else {
@@ -39,6 +42,7 @@ export class PostCreateComponent implements OnInit {
     if (form.invalid) {
       return;
     }
+    this.isLoading = true;
     if (this.mode === 'create') {
       this.postService.addPost(form.value.title, form.value.content);
     } else {
