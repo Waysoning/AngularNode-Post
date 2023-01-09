@@ -4,24 +4,8 @@ import Post from '../models/post.js';
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  const posts = [
-    {
-      id: 1,
-      title: 'Post 1',
-      content: 'Post 1 content',
-    },
-    {
-      id: 2,
-      title: 'Post 2',
-      content: 'Post 2 content',
-    },
-    {
-      id: 3,
-      title: 'Post 3',
-      content: 'Post 3 content',
-    },
-  ];
+router.get('/', async (req, res) => {
+  const posts = await Post.findAll();
   res.status(StatusCodes.OK).json({
     message: 'Posts fetched successfully',
     posts,
