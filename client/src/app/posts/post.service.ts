@@ -17,6 +17,7 @@ export class PostService {
     this.http
       .get<{ message: string; posts: Post[] }>('http://localhost:3001/api/post')
       .subscribe((postData) => {
+        console.log(postData.message);
         this.posts = postData.posts;
         this.postsUpdated.next([...this.posts]);
       });
@@ -28,7 +29,12 @@ export class PostService {
 
   addPost(title: string, content: string) {
     const post: Post = { title, content };
-    this.posts.push(post);
-    this.postsUpdated.next([...this.posts]);
+    this.http
+      .post<{ message: string }>('http://localhost:3001/api/post', post)
+      .subscribe((responseData) => {
+        console.log(responseData.message);
+        this.posts.push(post);
+        this.postsUpdated.next([...this.posts]);
+      });
   }
 }

@@ -22,8 +22,16 @@ router.get('/', (req, res) => {
     },
   ];
   res.status(StatusCodes.OK).json({
-    meassges: 'Posts fetched successfully',
+    message: 'Posts fetched successfully',
     posts,
+  });
+});
+
+router.post('/', (req, res) => {
+  const post = req.body;
+  console.log(post);
+  res.status(StatusCodes.CREATED).json({
+    message: 'Post created successfully',
   });
 });
 
