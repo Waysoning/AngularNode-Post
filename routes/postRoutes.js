@@ -23,4 +23,12 @@ router.post('/', async (req, res) => {
   });
 });
 
+router.delete('/:id', async (req, res) => {
+  const post = await Post.findByPk(req.params.id);
+  await post.destroy();
+  res.status(StatusCodes.OK).json({
+    message: 'Post deleted successfully',
+  });
+});
+
 export default router;
