@@ -22,8 +22,11 @@ router.post('/signup', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   const user = await User.findOne({
-    email: req.body.email,
+    where: {
+      email: req.body.email,
+    },
   });
+
   if (!user) {
     return res.status(StatusCodes.UNAUTHORIZED).json({
       message: 'Auth failed',

@@ -89,6 +89,11 @@ router.put(
       imagePath = url + '/images/' + req.file.filename;
     }
     const post = await Post.findByPk(req.params.id);
+    if (post.creator !== req.userData.userId) {
+      return res.status(StatusCodes.UNAUTHORIZED).json({
+        message: 'Not authorized to edit this post',
+      });
+    }
     post.title = req.body.title;
     post.content = req.body.content;
     post.imagePath = imagePath;
@@ -103,6 +108,13 @@ router.put(
 
 router.delete('/:id', checkAuth, async (req, res) => {
   const post = await Post.findByPk(req.params.id);
+  console.log(post.creator);
+  console.log(req.userData.userId);
+  if (post.creator !== req.userData.userId) {
+    return res.status(StatusCodes.UNAUTHORIZED).json({
+      message: 'Not authorized to delete this post',
+    });
+  }
   await post.destroy();
   res.status(StatusCodes.OK).json({
     message: 'Post deleted successfully',
