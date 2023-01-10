@@ -3,6 +3,9 @@ import path from 'path';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 
+import User from './models/User.js';
+import Post from './models/Post.js';
+
 import postRoutes from './routes/postRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 

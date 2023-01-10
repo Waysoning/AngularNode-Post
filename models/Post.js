@@ -1,5 +1,6 @@
 import { Sequelize } from 'sequelize';
 import sequelize from '../db.js';
+import User from './User.js';
 
 const Post = sequelize.define('Post', {
   id: {
@@ -18,7 +19,22 @@ const Post = sequelize.define('Post', {
   },
   imagePath: {
     type: Sequelize.STRING,
-    allowNull: true,
+    allowNull: false,
+  },
+  creator: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+  },
+});
+
+Post.belongsTo(User, {
+  foreignKey: 'creator',
+  as: 'posts',
+  onDelete: 'CASCADE',
+  onUpdate: 'CASCADE',
+  references: {
+    model: User,
+    key: 'id',
   },
 });
 

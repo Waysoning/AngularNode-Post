@@ -17,7 +17,7 @@ export class PostService {
   getPosts(postsPerPage: number, currentPage: number) {
     const queryParams = `?pagesize=${postsPerPage}&page=${currentPage}`;
     this.http
-      .get<{ message: string; posts: Post[]; maxPosts: number }>(
+      .get<{ message: string; posts: any; maxPosts: number }>(
         'http://localhost:3001/api/post' + queryParams
       )
       .subscribe((postData) => {
