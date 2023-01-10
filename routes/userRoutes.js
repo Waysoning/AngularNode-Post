@@ -55,6 +55,7 @@ router.post('/login', async (req, res) => {
     message: 'Auth successful',
     token,
     expiresIn: 3600,
+    userId: user.id,
   });
 });
 

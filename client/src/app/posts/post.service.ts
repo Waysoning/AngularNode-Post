@@ -17,7 +17,7 @@ export class PostService {
   getPosts(postsPerPage: number, currentPage: number) {
     const queryParams = `?pagesize=${postsPerPage}&page=${currentPage}`;
     this.http
-      .get<{ message: string; posts: any; maxPosts: number }>(
+      .get<{ message: string; posts: Post[]; maxPosts: number }>(
         'http://localhost:3001/api/post' + queryParams
       )
       .subscribe((postData) => {
@@ -56,14 +56,13 @@ export class PostService {
   updatePost(id: number, title: string, content: string, image: File | string) {
     let postData: Post | FormData;
     if (typeof image === 'string') {
-      postData = { id, title, content, imagePath: image };
+      postData = { id, title, content, imagePath: image, creator: null };
     } else {
       postData = new FormData();
       postData.append('title', title);
       postData.append('content', content);
       postData.append('image', image, title);
     }
-    const postDatapost: Post = { id, title, content, imagePath: null };
     this.http
       .put<{ message: string; post: Post }>(
         'http://localhost:3001/api/post/' + id,

@@ -97,6 +97,7 @@ router.put(
     post.title = req.body.title;
     post.content = req.body.content;
     post.imagePath = imagePath;
+    post.creator = req.userData.userId;
 
     await post.save();
     res.status(StatusCodes.OK).json({
