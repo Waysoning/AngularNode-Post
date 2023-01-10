@@ -51,7 +51,7 @@ export class PostService {
   }
 
   updatePost(id: number, title: string, content: string) {
-    const post: Post = { id, title, content };
+    const post: Post = { id, title, content, imagePath: null };
     this.http
       .put('http://localhost:3001/api/post/' + id, post)
       .subscribe((response) => {

@@ -16,6 +16,10 @@ const Post = sequelize.define('Post', {
     type: Sequelize.STRING,
     allowNull: false,
   },
+  imagePath: {
+    type: Sequelize.STRING,
+    allowNull: true,
+  },
 });
 
 export default Post;
