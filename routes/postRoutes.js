@@ -63,16 +63,27 @@ router.post(
   }
 );
 
-router.put('/:id', async (req, res) => {
-  const post = await Post.findByPk(req.params.id);
-  post.title = req.body.title;
-  post.content = req.body.content;
+router.put(
+  '/:id',
+  multer({ storage: storage }).single('image'),
+  async (req, res) => {
+    let imagePath = req.body.imagePath;
+    if (req.file) {
+      const url = req.protocol + '://' + req.get('host');
+      imagePath = url + '/images/' + req.file.filename;
+    }
+    const post = await Post.findByPk(req.params.id);
+    post.title = req.body.title;
+    post.content = req.body.content;
+    post.imagePath = imagePath;
 
-  await post.save();
-  res.status(StatusCodes.OK).json({
-    message: 'Post updated successfully',
-  });
-});
+    await post.save();
+    res.status(StatusCodes.OK).json({
+      message: 'Post updated successfully',
+      post,
+    });
+  }
+);
 
 router.delete('/:id', async (req, res) => {
   const post = await Post.findByPk(req.params.id);
