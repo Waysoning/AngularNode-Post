@@ -28,10 +28,22 @@ const storage = multer.diskStorage({
 });
 
 router.get('/', async (req, res) => {
-  const posts = await Post.findAll();
+  const pagesize = +req.query.pagesize;
+  const currentPage = +req.query.page;
+  let posts;
+  if (pagesize && currentPage) {
+    posts = await Post.findAll({
+      limit: pagesize,
+      offset: pagesize * (currentPage - 1),
+    });
+  } else {
+    posts = await Post.findAll();
+  }
+  const totalItems = await Post.count();
   res.status(StatusCodes.OK).json({
     message: 'Posts fetched successfully',
     posts,
+    maxPosts: totalItems,
   });
 });
 
