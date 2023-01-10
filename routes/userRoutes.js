@@ -51,6 +51,7 @@ router.post('/login', async (req, res) => {
   res.status(StatusCodes.OK).json({
     message: 'Auth successful',
     token,
+    expiresIn: 3600,
   });
 });
 
