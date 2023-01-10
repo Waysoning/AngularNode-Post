@@ -8,6 +8,16 @@ import User from '../models/User.js';
 const router = express.Router();
 
 router.post('/signup', async (req, res) => {
+  const userExists = await User.findOne({
+    where: {
+      email: req.body.email,
+    },
+  });
+  if (userExists) {
+    return res.status(StatusCodes.CONFLICT).json({
+      message: 'User already exists',
+    });
+  }
   const hash = bcrypt.hashSync(req.body.password, 10);
   const user = new User({
     email: req.body.email,
@@ -33,7 +43,7 @@ router.post('/login', async (req, res) => {
     });
   }
 
-  const result = bcrypt.compare(req.body.password, user.password);
+  const result = await bcrypt.compare(req.body.password, user.password);
   if (!result) {
     return res.status(StatusCodes.UNAUTHORIZED).json({
       message: 'Auth failed',

@@ -4,6 +4,7 @@ import { of, Subject } from 'rxjs';
 import { Router } from '@angular/router';
 
 import { Auth } from './auth';
+import * as e from 'cors';
 
 @Injectable({
   providedIn: 'root',
@@ -36,7 +37,14 @@ export class AuthService {
   registerUser(user: Auth) {
     return this.http
       .post('http://localhost:3001/api/user/signup', user)
-      .subscribe((res) => console.log(res));
+      .subscribe(
+        () => {
+          this.router.navigate(['/']);
+        },
+        (error) => {
+          this.authStatusListener.next(false);
+        }
+      );
   }
 
   loginUser(user: Auth) {
@@ -45,22 +53,27 @@ export class AuthService {
         'http://localhost:3001/api/user/login',
         user
       )
-      .subscribe((res) => {
-        this.token = res.token;
-        if (this.token) {
-          const expiresInDuration = res.expiresIn;
-          this.setAuthTimer(expiresInDuration);
-          this.isAuthenticated = true;
-          this.userId = res.userId;
-          this.authStatusListener.next(true);
-          this.saveAuthData(
-            this.token,
-            new Date(new Date().getTime() + expiresInDuration * 1000),
-            this.userId
-          );
-          this.router.navigate(['/']);
+      .subscribe(
+        (res) => {
+          this.token = res.token;
+          if (this.token) {
+            const expiresInDuration = res.expiresIn;
+            this.setAuthTimer(expiresInDuration);
+            this.isAuthenticated = true;
+            this.userId = res.userId;
+            this.authStatusListener.next(true);
+            this.saveAuthData(
+              this.token,
+              new Date(new Date().getTime() + expiresInDuration * 1000),
+              this.userId
+            );
+            this.router.navigate(['/']);
+          }
+        },
+        (error) => {
+          this.authStatusListener.next(false);
         }
-      });
+      );
   }
 
   autoAuthUser() {
