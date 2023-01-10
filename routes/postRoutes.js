@@ -2,6 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import { StatusCodes } from 'http-status-codes';
 import Post from '../models/post.js';
+import checkAuth from '../middleware/check-auth.js';
 
 const router = express.Router();
 
@@ -59,6 +60,7 @@ router.get('/:id', async (req, res) => {
 
 router.post(
   '/',
+  checkAuth,
   multer({ storage: storage }).single('image'),
   async (req, res) => {
     const url = req.protocol + '://' + req.get('host');
@@ -77,6 +79,7 @@ router.post(
 
 router.put(
   '/:id',
+  checkAuth,
   multer({ storage: storage }).single('image'),
   async (req, res) => {
     let imagePath = req.body.imagePath;
@@ -97,7 +100,7 @@ router.put(
   }
 );
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', checkAuth, async (req, res) => {
   const post = await Post.findByPk(req.params.id);
   await post.destroy();
   res.status(StatusCodes.OK).json({
