@@ -1,4 +1,5 @@
 import express from 'express';
+import path from 'path';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 
@@ -7,6 +8,7 @@ import postRoutes from './routes/postRoutes.js';
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+app.use('/images', express.static(path.join('images')));
 
 app.use('/api/post', postRoutes);
 
