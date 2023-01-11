@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import {} from 'dotenv/config.js';
 import User from '../models/User.js';
