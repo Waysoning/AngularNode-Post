@@ -4,7 +4,9 @@ import { of, Subject } from 'rxjs';
 import { Router } from '@angular/router';
 
 import { Auth } from './auth';
-import * as e from 'cors';
+import { environment } from '../../../environments/environment';
+
+const BACKEND_URL = environment.apiUrl + '/user/';
 
 @Injectable({
   providedIn: 'root',
@@ -35,22 +37,20 @@ export class AuthService {
   }
 
   registerUser(user: Auth) {
-    return this.http
-      .post('http://localhost:3001/api/user/signup', user)
-      .subscribe(
-        () => {
-          this.router.navigate(['/']);
-        },
-        (error) => {
-          this.authStatusListener.next(false);
-        }
-      );
+    return this.http.post(BACKEND_URL + 'signup', user).subscribe(
+      () => {
+        this.router.navigate(['/']);
+      },
+      (error) => {
+        this.authStatusListener.next(false);
+      }
+    );
   }
 
   loginUser(user: Auth) {
     this.http
       .post<{ token: string; expiresIn: number; userId: number }>(
-        'http://localhost:3001/api/user/login',
+        BACKEND_URL + 'login',
         user
       )
       .subscribe(
