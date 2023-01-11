@@ -39,14 +39,14 @@ router.post('/login', async (req, res) => {
 
   if (!user) {
     return res.status(StatusCodes.UNAUTHORIZED).json({
-      message: 'Auth failed',
+      message: 'Invalid credentials',
     });
   }
 
   const result = await bcrypt.compare(req.body.password, user.password);
   if (!result) {
     return res.status(StatusCodes.UNAUTHORIZED).json({
-      message: 'Auth failed',
+      message: 'Invalid credentials',
     });
   }
 
