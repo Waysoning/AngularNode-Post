@@ -1,125 +1,25 @@
 import express from 'express';
-import multer from 'multer';
-import { StatusCodes } from 'http-status-codes';
-import Post from '../models/post.js';
+import {
+  getPosts,
+  getPost,
+  createPost,
+  updatePost,
+  deletePost,
+} from '../controllers/post-controller.js';
+
 import checkAuth from '../middleware/check-auth.js';
+import extractFile from '../middleware/file.js';
 
 const router = express.Router();
 
-const MIME_TYPE_MAP = {
-  'image/png': 'png',
-  'image/jpeg': 'jpg',
-  'image/jpg': 'jpg',
-};
+router.get('/', getPosts);
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const isValid = MIME_TYPE_MAP[file.mimetype];
-    let error = new Error('Invalid mime type');
-    if (isValid) {
-      error = null;
-    }
-    cb(error, 'images');
-  },
-  filename: (req, file, cb) => {
-    const name = file.originalname.toLowerCase().split(' ').join('-');
-    const ext = MIME_TYPE_MAP[file.mimetype];
-    cb(null, `${name}-${Date.now()}.${ext}`);
-  },
-});
+router.get('/:id', getPost);
 
-router.get('/', async (req, res) => {
-  const pagesize = +req.query.pagesize;
-  const currentPage = +req.query.page;
-  let posts;
-  if (pagesize && currentPage) {
-    posts = await Post.findAll({
-      limit: pagesize,
-      offset: pagesize * (currentPage - 1),
-    });
-  } else {
-    posts = await Post.findAll();
-  }
-  const totalItems = await Post.count();
-  res.status(StatusCodes.OK).json({
-    message: 'Posts fetched successfully',
-    posts,
-    maxPosts: totalItems,
-  });
-});
+router.post('/', checkAuth, extractFile, createPost);
 
-router.get('/:id', async (req, res) => {
-  const post = await Post.findByPk(req.params.id);
-  if (!post) {
-    res.status(StatusCodes.NOT_FOUND).json({
-      message: 'Post not found',
-    });
-  }
-  res.status(StatusCodes.OK).json(post);
-});
+router.put('/:id', checkAuth, extractFile, updatePost);
 
-router.post(
-  '/',
-  checkAuth,
-  multer({ storage: storage }).single('image'),
-  async (req, res) => {
-    const url = req.protocol + '://' + req.get('host');
-    const post = new Post({
-      title: req.body.title,
-      content: req.body.content,
-      imagePath: url + '/images/' + req.file.filename,
-      creator: req.userData.userId,
-    });
-    await post.save();
-    res.status(StatusCodes.CREATED).json({
-      message: 'Post created successfully',
-      post,
-    });
-  }
-);
-
-router.put(
-  '/:id',
-  checkAuth,
-  multer({ storage: storage }).single('image'),
-  async (req, res) => {
-    let imagePath = req.body.imagePath;
-    if (req.file) {
-      const url = req.protocol + '://' + req.get('host');
-      imagePath = url + '/images/' + req.file.filename;
-    }
-    const post = await Post.findByPk(req.params.id);
-    if (post.creator !== req.userData.userId) {
-      return res.status(StatusCodes.UNAUTHORIZED).json({
-        message: 'Not authorized to edit this post',
-      });
-    }
-    post.title = req.body.title;
-    post.content = req.body.content;
-    post.imagePath = imagePath;
-    post.creator = req.userData.userId;
-
-    await post.save();
-    res.status(StatusCodes.OK).json({
-      message: 'Post updated successfully',
-      post,
-    });
-  }
-);
-
-router.delete('/:id', checkAuth, async (req, res) => {
-  const post = await Post.findByPk(req.params.id);
-  console.log(post.creator);
-  console.log(req.userData.userId);
-  if (post.creator !== req.userData.userId) {
-    return res.status(StatusCodes.UNAUTHORIZED).json({
-      message: 'Not authorized to delete this post',
-    });
-  }
-  await post.destroy();
-  res.status(StatusCodes.OK).json({
-    message: 'Post deleted successfully',
-  });
-});
+router.delete('/:id', checkAuth, deletePost);
 
 export default router;
